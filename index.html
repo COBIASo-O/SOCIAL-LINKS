@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CØBIAS — Links</title>
+<link href="https://fonts.googleapis.com/css2?family=Righteous&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    min-height:100vh;
+    background:#04010f;
+    font-family:'Rajdhani',sans-serif;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:40px 20px;
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  /* Nebula background */
+  body::before {
+    content:'';
+    position:fixed; inset:0; z-index:0;
+    background:
+      radial-gradient(ellipse 70% 60% at 10% 30%, rgba(100,20,210,0.75) 0%, transparent 65%),
+      radial-gradient(ellipse 60% 55% at 90% 20%, rgba(70,0,160,0.7) 0%, transparent 60%),
+      radial-gradient(ellipse 80% 50% at 50% 85%, rgba(85,10,180,0.65) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 45% at 70% 55%, rgba(55,0,120,0.55) 0%, transparent 55%),
+      radial-gradient(ellipse 40% 40% at 25% 75%, rgba(110,25,220,0.5) 0%, transparent 50%);
+    pointer-events:none;
+  }
+
+  /* Scanlines */
+  body::after {
+    content:'';
+    position:fixed; inset:0; z-index:10; pointer-events:none;
+    background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.04) 3px,rgba(0,0,0,0.04) 4px);
+    pointer-events:none;
+  }
+
+  canvas#stars {
+    position:fixed; inset:0; z-index:2; pointer-events:none; background:transparent;
+  }
+
+  .container {
+    position:relative; z-index:20;
+    width:100%; max-width:480px;
+    display:flex; flex-direction:column; align-items:center;
+    gap:14px;
+  }
+
+  /* Profile pic placeholder */
+  
+  .avatar-wrap {
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:4px;
+  }
+  #alienIcon {
+    animation:alienTwist 4s ease-in-out infinite, alienGlow 4s ease-in-out infinite;
+    transform-origin: center;
+  }
+  @keyframes alienTwist {
+    0%   { transform: rotate(-12deg); }
+    50%  { transform: rotate(12deg); }
+    100% { transform: rotate(-12deg); }
+  }
+  @keyframes alienGlow {
+    0%,100% { filter:drop-shadow(0 0 8px rgba(147,51,234,0.9)) drop-shadow(0 0 20px rgba(88,28,135,0.6)); }
+    50%     { filter:drop-shadow(0 0 16px rgba(147,51,234,1)) drop-shadow(0 0 35px rgba(107,33,168,0.8)); }
+  }
+  @keyframes avatarPulse {
+    0%,100%{box-shadow:0 0 20px rgba(168,85,247,0.5),0 0 50px rgba(168,85,247,0.2)}
+    50%    {box-shadow:0 0 30px rgba(168,85,247,0.8),0 0 70px rgba(96,165,250,0.3)}
+  }
+
+  .name {
+    font-family:'Righteous',cursive;
+    font-size:38px; font-weight:900;
+    letter-spacing:10px;
+    color:transparent;
+    background:linear-gradient(155deg,#ffffff 0%,#9333ea 25%,#6b21a8 55%,#3b0070 80%,#1a0035 100%);
+    -webkit-background-clip:text; background-clip:text;
+    filter:drop-shadow(0 0 8px rgba(168,85,247,0.9)) drop-shadow(0 0 20px rgba(100,20,180,0.6));
+    animation:nameGlow 4s ease-in-out infinite;
+  }
+  @keyframes nameGlow {
+    0%,100%{filter:drop-shadow(0 0 8px rgba(168,85,247,0.9)) drop-shadow(0 0 20px rgba(100,20,180,0.6))}
+    50%    {filter:drop-shadow(0 0 14px rgba(180,100,255,1)) drop-shadow(0 0 35px rgba(160,80,255,0.9))}
+  }
+
+  .tagline {
+    font-size:13px; font-weight:600; letter-spacing:6px;
+    color:rgba(180,120,255,0.6);
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+
+  /* Divider */
+  .divider {
+    display:flex; align-items:center; gap:12px;
+    width:100%; margin:4px 0 10px;
+  }
+  .div-line { flex:1; height:1px; background:linear-gradient(90deg,transparent,rgba(168,85,247,0.6)); }
+  .div-line.r { background:linear-gradient(90deg,rgba(168,85,247,0.6),transparent); }
+  .div-diamond {
+    width:8px; height:8px;
+    background:rgba(192,132,252,0.8);
+    clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);
+    animation:spinD 6s linear infinite;
+  }
+  @keyframes spinD { to{transform:rotate(360deg)} }
+
+  /* Link buttons */
+  .link-btn {
+    display:flex; align-items:center; gap:16px;
+    width:100%; padding:16px 22px;
+    background:linear-gradient(135deg,rgba(14,4,36,0.9),rgba(20,6,50,0.85));
+    border:1px solid rgba(168,85,247,0.35);
+    border-radius:6px;
+    text-decoration:none;
+    color:#e9d5ff;
+    font-family:'Rajdhani',sans-serif;
+    font-size:17px; font-weight:700;
+    letter-spacing:4px;
+    text-transform:uppercase;
+    position:relative; overflow:hidden;
+    transition:border-color 0.3s, transform 0.2s, box-shadow 0.3s;
+    cursor:pointer;
+  }
+  .link-btn::before {
+    content:'';
+    position:absolute; top:0; left:0; right:0; height:1px;
+    background:linear-gradient(90deg,transparent,rgba(168,85,247,0.6),transparent);
+  }
+  .link-btn:hover {
+    border-color:rgba(168,85,247,0.8);
+    transform:translateY(-2px);
+    box-shadow:0 8px 30px rgba(168,85,247,0.25), 0 0 0 1px rgba(168,85,247,0.2);
+  }
+  .link-btn:active { transform:translateY(0); }
+
+  .btn-icon {
+    width:36px; height:36px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:8px; font-size:20px;
+  }
+  .btn-label { flex:1; }
+  .btn-arrow {
+    font-size:16px; opacity:0.5;
+    transition:opacity 0.2s, transform 0.2s;
+  }
+  .link-btn:hover .btn-arrow { opacity:1; transform:translateX(4px); }
+
+  /* Platform colors */
+  .twitch  { --pc:rgba(145,70,255,0.5); }
+  .tiktok  { --pc:rgba(120,40,200,0.3); }
+  .youtube { --pc:rgba(255,50,50,0.35); }
+  .facebook{ --pc:rgba(24,119,242,0.35); }
+  .donate  { --pc:rgba(168,85,247,0.35); }
+
+  .twitch  .btn-icon { background:rgba(145,70,255,0.15); }
+  .tiktok  .btn-icon { background:rgba(80,0,160,0.15); }
+  .youtube .btn-icon { background:rgba(255,50,50,0.12); }
+  .facebook .btn-icon { background:rgba(24,119,242,0.12); }
+  .donate  .btn-icon { background:rgba(240,171,252,0.12); }
+
+  .twitch:hover   { box-shadow:0 8px 30px rgba(145,70,255,0.3); border-color:rgba(145,70,255,0.7); }
+  .tiktok:hover   { box-shadow:0 8px 30px rgba(168,85,247,0.2); border-color:rgba(168,85,247,0.5); }
+  .youtube:hover  { box-shadow:0 8px 30px rgba(255,50,50,0.25); border-color:rgba(255,80,80,0.6); }
+  .facebook:hover { box-shadow:0 8px 30px rgba(24,119,242,0.25); border-color:rgba(24,119,242,0.6); }
+  .donate:hover   { box-shadow:0 8px 30px rgba(168,85,247,0.3); border-color:rgba(200,150,255,0.7); }
+
+  /* Donate button special styling */
+  .donate {
+    background:linear-gradient(135deg,rgba(30,8,60,0.9),rgba(20,6,50,0.85));
+    border-color:rgba(168,85,247,0.4);
+  }
+
+  .footer {
+    margin-top:16px;
+    font-size:11px; letter-spacing:4px;
+    color:rgba(168,85,247,0.35);
+    text-transform:uppercase;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<div class="container">
+
+    <div class="avatar-wrap">
+    <svg id="alienIcon" viewBox="0 0 15.741 15.741" width="110" height="110" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 0 10px rgba(168,85,247,0.9)) drop-shadow(0 0 24px rgba(120,40,200,0.5));">
+      <defs>
+        <linearGradient id="alienGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"   stop-color="#ffffff"/>
+          <stop offset="30%"  stop-color="#9333ea"/>
+          <stop offset="65%"  stop-color="#6b21a8"/>
+          <stop offset="100%" stop-color="#2e0060"/>
+        </linearGradient>
+      </defs>
+      <g fill="url(#alienGrad)">
+        <path d="M8.472,0l-1.28,0.003c-2.02,0.256-3.679,1.104-4.671,2.386C1.685,3.47,1.36,4.78,1.553,6.283 c0.37,2.87,2.773,6.848,4.674,8.486c0.475,0.41,1.081,0.794,1.353,0.899c0.129,0.044,0.224,0.073,0.333,0.073 c0.11,0,0.217-0.031,0.319-0.091c1.234-0.603,2.438-1.88,3.788-4.02c0.936-1.485,2.032-3.454,2.2-5.495 C14.492,2.843,12.295,0.492,8.472,0z M8.435,0.69c3.431,0.447,5.337,2.462,5.097,5.391c-0.156,1.913-1.271,3.875-2.097,5.182 c-1.278,2.027-2.395,3.226-3.521,3.777c-0.005,0.002-0.009,0.004-0.012,0.005c-0.029-0.006-0.068-0.021-0.087-0.027 c-0.149-0.057-0.706-0.401-1.135-0.771c-1.771-1.525-4.095-5.375-4.44-8.052C2.07,4.879,2.348,3.741,3.068,2.812 c0.878-1.135,2.363-1.889,4.168-2.12L8.435,0.69z"/>
+        <path d="M3.504,6.83C3.421,6.857,3.37,6.913,3.373,7.024c0.308,1.938,1.616,3.536,3.842,3.126 C7.002,8.019,5.745,6.933,3.504,6.83z"/>
+        <path d="M8.778,10.215c2.196-0.125,3.61-1.379,3.776-3.319C10.321,6.727,8.55,7.923,8.778,10.215z"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="name">C&#216;BIAS</div>
+  <div class="tagline">Gamer Dad &nbsp;•&nbsp; Beyond The Void</div>
+
+  <div class="divider">
+    <div class="div-line"></div>
+    <div class="div-diamond"></div>
+    <div class="div-line r"></div>
+  </div>
+
+  <!-- TWITCH -->
+  <a class="link-btn twitch" href="https://twitch.tv/Lost_beacon_95" target="_blank" rel="noopener">
+    <div class="btn-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="#9146ff"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
+    </div>
+    <span class="btn-label">Twitch</span>
+    <span class="btn-arrow">›</span>
+  </a>
+
+  <!-- TIKTOK -->
+  <a class="link-btn tiktok" href="https://www.tiktok.com/@.cobias" target="_blank" rel="noopener">
+    <div class="btn-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="#ffffff"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.75a8.2 8.2 0 004.79 1.53V6.79a4.85 4.85 0 01-1.02-.1z"/></svg>
+    </div>
+    <span class="btn-label">TikTok</span>
+    <span class="btn-arrow">›</span>
+  </a>
+
+  <!-- YOUTUBE -->
+  <a class="link-btn youtube" href="https://www.youtube.com/@C%C3%98BIASo_O" target="_blank" rel="noopener">
+    <div class="btn-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+    </div>
+    <span class="btn-label">YouTube</span>
+    <span class="btn-arrow">›</span>
+  </a>
+
+  <!-- FACEBOOK -->
+  <a class="link-btn facebook" href="https://www.facebook.com/profile.php?id=61580732094882" target="_blank" rel="noopener">
+    <div class="btn-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="#1877f2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    </div>
+    <span class="btn-label">Facebook</span>
+    <span class="btn-arrow">›</span>
+  </a>
+
+  <!-- DONATE -->
+  <a class="link-btn donate" href="https://cash.app/$XxCobiasxX" target="_blank" rel="noopener">
+    <div class="btn-icon" style="font-size:22px;font-weight:900;color:rgba(74,222,128,0.95);font-family:monospace;">$</div>
+    <span class="btn-label">Support The Stream</span>
+    <span class="btn-arrow">›</span>
+  </a>
+
+  <div class="footer">Stay Weird &nbsp;•&nbsp; Stay Alive 🖤</div>
+
+</div>
+
+<script>
+  // Stars
+  const canvas = document.getElementById('stars');
+  const ctx = canvas.getContext('2d');
+  function resize() { canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+
+  // Dense starfield — 3 layers: tiny dim, medium, bright
+  const STARS = [];
+  for(let i=0;i<600;i++) STARS.push({
+    x:Math.random(), y:Math.random(),
+    r:Math.random()*1.2+0.4,
+    a:Math.random()*0.5+0.25,
+    speed:Math.random()*0.004+0.001,
+    phase:Math.random()*Math.PI*2,
+    type:'dim'
+  });
+  for(let i=0;i<180;i++) STARS.push({
+    x:Math.random(), y:Math.random(),
+    r:Math.random()*1.6+0.8,
+    a:Math.random()*0.5+0.45,
+    speed:Math.random()*0.006+0.002,
+    phase:Math.random()*Math.PI*2,
+    type:'mid'
+  });
+  for(let i=0;i<40;i++) STARS.push({
+    x:Math.random(), y:Math.random(),
+    r:Math.random()*2+1.2,
+    a:Math.random()*0.3+0.7,
+    speed:Math.random()*0.008+0.003,
+    phase:Math.random()*Math.PI*2,
+    type:'bright'
+  });
+
+  // Nebula cloud patches drawn on canvas for extra depth
+  function drawNebulaClouds() {
+    const clouds = [
+      {x:0.15,y:0.25,rx:180,ry:130,col:'rgba(100,20,220,0.35)'},
+      {x:0.85,y:0.15,rx:150,ry:120,col:'rgba(70,0,160,0.3)'},
+      {x:0.5, y:0.7, rx:200,ry:140,col:'rgba(90,10,200,0.3)'},
+      {x:0.3, y:0.6, rx:120,ry:100,col:'rgba(110,25,230,0.25)'},
+    ];
+    clouds.forEach(cl=>{
+      const grd = ctx.createRadialGradient(
+        cl.x*canvas.width, cl.y*canvas.height, 0,
+        cl.x*canvas.width, cl.y*canvas.height, cl.rx
+      );
+      grd.addColorStop(0, cl.col);
+      grd.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = grd;
+      ctx.beginPath();
+      ctx.ellipse(cl.x*canvas.width, cl.y*canvas.height, cl.rx, cl.ry, 0, 0, Math.PI*2);
+      ctx.fill();
+    });
+  }
+
+  function drawStars(t) {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    drawNebulaClouds();
+    STARS.forEach(s=>{
+      const a = s.a*(0.4+0.6*Math.sin(t*s.speed+s.phase));
+      ctx.beginPath();
+      ctx.arc(s.x*canvas.width, s.y*canvas.height, s.r, 0, Math.PI*2);
+      // Bright stars get a subtle purple tint
+      const col = `rgba(255,255,255,${a})`;
+      ctx.fillStyle = col;
+      ctx.fill();
+    });
+    requestAnimationFrame(drawStars);
+  }
+  requestAnimationFrame(drawStars);
+</script>
+</body>
+</html>
