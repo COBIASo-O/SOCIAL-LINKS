@@ -8,7 +8,15 @@
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link href="https://fonts.googleapis.com/css2?family=Righteous&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  @font-face {
+    font-family: 'SpaceAge';
+    src: url('space-age.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+</style>
 <style>
   *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
@@ -121,7 +129,7 @@
   }
 
   .name {
-    font-family:'Righteous',cursive;
+    font-family:'SpaceAge',cursive;
     font-size:38px; font-weight:900;
     letter-spacing:10px;
     color:transparent;
@@ -191,7 +199,7 @@
     display:flex; align-items:center; justify-content:center;
     border-radius:8px; font-size:20px;
   }
-  .btn-label { flex:1; }
+  .btn-label { flex:1; font-family:'SpaceAge',cursive; }
   .btn-arrow {
     font-size:16px; opacity:0.5;
     transition:opacity 0.2s, transform 0.2s;
@@ -228,6 +236,7 @@
 
   .footer {
     margin-top:16px;
+    font-family:'SpaceAge',cursive;
     font-size:11px; letter-spacing:4px;
     color:rgba(168,85,247,0.35);
     text-transform:uppercase;
